@@ -40,7 +40,7 @@ public class SkillService implements ISkillService{
     @Override
     public Skill update(PostSkillDTO skillDTO, Long id){
         Skill skill= get(id);
-        Optional<Skill> existingSkill=skillRepository.findByName(skill.getName());
+        Optional<Skill> existingSkill=skillRepository.findByName(skillDTO.getName());
         if (existingSkill.isPresent() && existingSkill.get().getId()!=id)
             throw new BadRequestException("Skill name is taken");
         skill.setName(skillDTO.getName());

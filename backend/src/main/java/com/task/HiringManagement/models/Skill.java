@@ -11,8 +11,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "skills")
 public class Skill {
-    @Column(name = "name")
+    @Column(name = "skill_name")
     private String name;
 
     @Id

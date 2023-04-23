@@ -15,8 +15,9 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "candidates")
 public class Candidate {
-    @Column(name="name",nullable = false)
+    @Column(name="full_name",nullable = false)
     private String name;
     @Column(name="birth",nullable = false)
     private Date birth;
@@ -25,7 +26,7 @@ public class Candidate {
     @Column(name="email",nullable = false)
     private String email;
     @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.REFRESH)
-    @JoinTable(name = "candidates_skils",joinColumns = @JoinColumn(name = "candidate_id",referencedColumnName = "id"),inverseJoinColumns = @JoinColumn(name = "skill_id",referencedColumnName = "id"))
+    @JoinTable(name = "candidates_skills",joinColumns = @JoinColumn(name = "candidate_id",referencedColumnName = "id"),inverseJoinColumns = @JoinColumn(name = "skill_id",referencedColumnName = "id"))
     private List<Skill> skills;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

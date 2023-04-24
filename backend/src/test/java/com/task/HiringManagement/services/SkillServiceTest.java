@@ -3,7 +3,6 @@ package com.task.HiringManagement.services;
 import com.task.HiringManagement.dtos.PostSkillDTO;
 import com.task.HiringManagement.exceptions.BadRequestException;
 import com.task.HiringManagement.exceptions.NotFoundException;
-import com.task.HiringManagement.mappers.SkillMapper;
 import com.task.HiringManagement.models.Skill;
 import com.task.HiringManagement.repositories.SkillRepository;
 import org.junit.jupiter.api.Assertions;

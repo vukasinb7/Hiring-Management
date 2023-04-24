@@ -4,11 +4,11 @@ import com.task.HiringManagement.dtos.PostCandidateDTO;
 import com.task.HiringManagement.dtos.PostSkillListDTO;
 import com.task.HiringManagement.exceptions.BadRequestException;
 import com.task.HiringManagement.exceptions.NotFoundException;
-import com.task.HiringManagement.mappers.CandidateMapper;
 import com.task.HiringManagement.models.Candidate;
 import com.task.HiringManagement.models.Skill;
 import com.task.HiringManagement.repositories.CandidateRepository;
 import com.task.HiringManagement.repositories.SkillRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,10 +24,13 @@ public class CandidateService implements ICandidateService {
     private final CandidateRepository candidateRepository;
     private final SkillRepository skillRepository;
 
+    private ModelMapper modelMapper;
+
     @Autowired
-    public CandidateService(CandidateRepository candidateRepository,SkillRepository skillRepository){
+    public CandidateService(CandidateRepository candidateRepository,SkillRepository skillRepository,ModelMapper modelMapper){
         this.candidateRepository=candidateRepository;
         this.skillRepository=skillRepository;
+        this.modelMapper=modelMapper;
     }
 
     @Override
@@ -39,7 +42,9 @@ public class CandidateService implements ICandidateService {
     }
     @Override
     public Candidate insert(PostCandidateDTO candidateDTO){
-        Candidate candidate= CandidateMapper.fromPostDTOtoModel(candidateDTO);
+        Candidate candidate= modelMapper.map(candidateDTO,Candidate.class);
+        if (candidateRepository.findCandidateByEmail(candidate.getEmail()).isPresent())
+            throw new BadRequestException("Candidate with same email already exists");
         List<Long> skillIds= candidateDTO.getSkillIds().stream().distinct().toList();
         List<Skill> skills= parseSkills(skillIds);
 
@@ -100,7 +105,7 @@ public class CandidateService implements ICandidateService {
         for (Long skilID:skillIds) {
             Optional<Skill> skill=skillRepository.findById(skilID);
             if (skill.isEmpty())
-                throw new BadRequestException(String.format("Skill with id:{%s} not found", skilID));
+                throw new NotFoundException(String.format("Skill with id:{%s} not found", skilID));
             skills.add(skill.get());
         }
         return skills;

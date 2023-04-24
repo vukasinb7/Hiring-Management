@@ -1,10 +1,7 @@
 package com.task.HiringManagement.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @AllArgsConstructor
@@ -12,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "skills")
+@EqualsAndHashCode
 public class Skill {
     @Column(name = "skill_name")
     private String name;

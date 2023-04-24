@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class Candidate {
     @Column(name="full_name",nullable = false)
     private String name;
     @Column(name="birth",nullable = false)
-    private Date birth;
+    private LocalDateTime birth;
     @Column(name="contact_number",nullable = false)
     private String contactNumber;
     @Column(name="email",nullable = false)

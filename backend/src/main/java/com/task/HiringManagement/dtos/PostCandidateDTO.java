@@ -1,16 +1,19 @@
 package com.task.HiringManagement.dtos;
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class PostCandidateDTO {
 
     @NotBlank(message = "Field (name) is required!")
@@ -18,8 +21,8 @@ public class PostCandidateDTO {
     private String name;
 
 
-    @Past
-    private Date birth;
+    @Past(message = "Date of birth must be in past")
+    private LocalDateTime birth;
 
     @NotBlank(message = "Field (contactNumber) is required!")
     @Pattern(regexp = "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$",message = "Phone number is not valid")

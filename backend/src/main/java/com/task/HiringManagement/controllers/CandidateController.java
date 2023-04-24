@@ -1,8 +1,6 @@
 package com.task.HiringManagement.controllers;
 
 import com.task.HiringManagement.dtos.*;
-import com.task.HiringManagement.mappers.CandidateMapper;
-import com.task.HiringManagement.mappers.SkillMapper;
 import com.task.HiringManagement.models.Candidate;
 import com.task.HiringManagement.models.Skill;
 import com.task.HiringManagement.services.ICandidateService;
@@ -12,6 +10,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,11 +24,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/candidate")
 public class CandidateController {
     private final ICandidateService candidateService;
+    private ModelMapper modelMapper;
 
     @Autowired
-    public CandidateController(ICandidateService candidateService)
+    public CandidateController(ICandidateService candidateService,ModelMapper modelMapper)
     {
         this.candidateService=candidateService;
+        this.modelMapper=modelMapper;
     }
     @Operation(summary = "Create Candidate")
     @PostMapping(
@@ -38,7 +39,7 @@ public class CandidateController {
     )
     public ResponseEntity<GetCandidateDTO> createCandidate(@RequestBody @Valid PostCandidateDTO candidateDTO){
         Candidate candidate=candidateService.insert(candidateDTO);
-        return new ResponseEntity<>(CandidateMapper.fromModeltoGetDTO(candidate), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(candidate,GetCandidateDTO.class), HttpStatus.OK);
     }
     @Operation(summary = "Search Candidate By Name")
     @GetMapping(
@@ -89,7 +90,7 @@ public class CandidateController {
     @Positive(message = "Id must be positive")
     @PathVariable Long id){
         Candidate candidate= candidateService.updatePersonalInformations(candidateDTO,id);
-        return new ResponseEntity<>(CandidateMapper.fromModeltoGetDTO(candidate), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(candidate,GetCandidateDTO.class), HttpStatus.OK);
     }
     @Operation(summary = "Add Skills To Candidate")
     @PutMapping(
@@ -100,7 +101,7 @@ public class CandidateController {
     @Positive(message = "Id must be positive")
     @PathVariable Long id){
         Candidate candidate= candidateService.addSkills(skillListDTO,id);
-        return new ResponseEntity<>(CandidateMapper.fromModeltoGetDTO(candidate), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(candidate,GetCandidateDTO.class), HttpStatus.OK);
     }
     @Operation(summary = "Remove Skills From Candidate")
     @PutMapping(
@@ -111,7 +112,7 @@ public class CandidateController {
     @Positive(message = "Id must be positive")
     @PathVariable Long id){
         Candidate candidate= candidateService.removeSkills(skillListDTO,id);
-        return new ResponseEntity<>(CandidateMapper.fromModeltoGetDTO(candidate), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(candidate,GetCandidateDTO.class), HttpStatus.OK);
     }
 
 }

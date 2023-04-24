@@ -2,13 +2,13 @@ package com.task.HiringManagement.controllers;
 
 import com.task.HiringManagement.dtos.GetSkillDTO;
 import com.task.HiringManagement.dtos.PostSkillDTO;
-import com.task.HiringManagement.mappers.SkillMapper;
 import com.task.HiringManagement.models.Skill;
 import com.task.HiringManagement.services.ISkillService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,10 +19,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/skill")
 public class SkillController {
     private final ISkillService skillService;
+    private ModelMapper modelMapper;
+
 
     @Autowired
-    public SkillController(ISkillService skillService){
+    public SkillController(ISkillService skillService,ModelMapper modelMapper){
         this.skillService=skillService;
+        this.modelMapper=modelMapper;
     }
     @Operation(summary = "Create Skill")
     @PostMapping(
@@ -31,7 +34,7 @@ public class SkillController {
     )
     public ResponseEntity<GetSkillDTO> createSkill(@RequestBody @Valid PostSkillDTO skillDTO){
         Skill skill = skillService.insert(skillDTO);
-        return new ResponseEntity<>(SkillMapper.fromModeltoGetDTO(skill), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(skill,GetSkillDTO.class), HttpStatus.OK);
     }
     @Operation(summary = "Get Skill")
     @GetMapping(
@@ -42,7 +45,7 @@ public class SkillController {
                                                         @Positive(message = "Id must be positive")
                                                         @PathVariable Long id){
         Skill skill= skillService.get(id);
-        return new ResponseEntity<>(SkillMapper.fromModeltoGetDTO(skill), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(skill,GetSkillDTO.class), HttpStatus.OK);
     }
     @Operation(summary = "Update Skill")
     @PutMapping(
@@ -53,7 +56,7 @@ public class SkillController {
                                                        @Positive(message = "Id must be positive")
                                                        @PathVariable Long id){
         Skill skill= skillService.update(skillDTO,id);
-        return new ResponseEntity<>(SkillMapper.fromModeltoGetDTO(skill), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(skill,GetSkillDTO.class), HttpStatus.OK);
     }
     @Operation(summary = "Delete Skill")
     @DeleteMapping(

@@ -5,6 +5,7 @@ import com.task.HiringManagement.dtos.PostSkillDTO;
 import com.task.HiringManagement.mappers.SkillMapper;
 import com.task.HiringManagement.models.Skill;
 import com.task.HiringManagement.services.ISkillService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -23,7 +24,7 @@ public class SkillController {
     public SkillController(ISkillService skillService){
         this.skillService=skillService;
     }
-
+    @Operation(summary = "Create Skill")
     @PostMapping(
             value = "",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -32,7 +33,7 @@ public class SkillController {
         Skill skill = skillService.insert(skillDTO);
         return new ResponseEntity<>(SkillMapper.fromModeltoGetDTO(skill), HttpStatus.OK);
     }
-
+    @Operation(summary = "Get Skill")
     @GetMapping(
             value = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -43,7 +44,7 @@ public class SkillController {
         Skill skill= skillService.get(id);
         return new ResponseEntity<>(SkillMapper.fromModeltoGetDTO(skill), HttpStatus.OK);
     }
-
+    @Operation(summary = "Update Skill")
     @PutMapping(
             value = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -54,7 +55,7 @@ public class SkillController {
         Skill skill= skillService.update(skillDTO,id);
         return new ResponseEntity<>(SkillMapper.fromModeltoGetDTO(skill), HttpStatus.OK);
     }
-
+    @Operation(summary = "Delete Skill")
     @DeleteMapping(
             value = "/{id}"
     )

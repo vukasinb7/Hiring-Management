@@ -285,4 +285,6 @@ public class CandidateServiceTest {
         Mockito.when(candidateRepository.findById(1L)).thenReturn(Optional.of(candidateExp));
         Assertions.assertThrows(BadRequestException.class,()->{candidateService.updatePersonalInformations(candidateDTO,1L);},"Email is taken");
     }
+
+
 }

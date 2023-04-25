@@ -17,4 +17,7 @@ public interface CandidateRepository extends JpaRepository<Candidate,Long> {
     Page<Candidate> findCandidateByNameContainingIgnoreCase(String name, PageRequest pageable);
     @Query(value = "SELECT c.id,c.full_name,c.contact_number,c.birth,c.email FROM candidates c inner join  candidates_skills cs on c.id=cs.candidate_id  where cs.skill_id in (:ids) group by c.id having count(c.id)=(:id_size) ",nativeQuery = true)
     Page<Candidate> findCandidateBySkillsContaing(@Param("ids") List<Long> skills,@Param("id_size") Integer idSize, PageRequest pageable);
+
+    @Query(value = "SELECT candidate FROM Candidate candidate")
+    Page<Candidate> findAll(PageRequest pageRequest);
 }

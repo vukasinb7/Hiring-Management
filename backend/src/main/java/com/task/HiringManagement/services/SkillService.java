@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,6 +30,10 @@ public class SkillService implements ISkillService{
         if (skill.isEmpty())
             throw new NotFoundException("Skill not found");
         return  skill.get();
+    }
+    @Override
+    public List<Skill> getAll(){
+        return skillRepository.findAll();
     }
 
     @Override

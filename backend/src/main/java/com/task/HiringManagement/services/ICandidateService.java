@@ -25,4 +25,6 @@ public interface ICandidateService {
     Candidate addSkills(PostSkillListDTO skillIds, Long id);
 
     Candidate removeSkills(PostSkillListDTO skillIds, Long id);
+
+    Page<Candidate> getAll(PageRequest pageRequest);
 }

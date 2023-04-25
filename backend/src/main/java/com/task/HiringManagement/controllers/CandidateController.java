@@ -56,6 +56,21 @@ public class CandidateController {
         Page<Candidate> candidates = candidateService.searchByName(name, PageRequest.of(page, size));
         return new ResponseEntity<>(new FilteredCandidatesDTO(candidates), HttpStatus.OK);
     }
+
+    @Operation(summary = "Get All Candidates")
+    @GetMapping(
+            value = "/all",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    ResponseEntity<FilteredCandidatesDTO> getAllCandidates(@Min(value=0, message = "Page must be 0 or greater")
+                                                                 @NotNull(message = "Field (page) is required")
+                                                                 @RequestParam int page,
+                                                                 @Positive(message = "Size must be positive")
+                                                                 @NotNull(message = "Field (size) is required")
+                                                                 @RequestParam int size){
+        Page<Candidate> candidates = candidateService.getAll(PageRequest.of(page, size));
+        return new ResponseEntity<>(new FilteredCandidatesDTO(candidates), HttpStatus.OK);
+    }
     @Operation(summary = "Search Candidate By Skills")
     @GetMapping(
             value = "/searchSkills",

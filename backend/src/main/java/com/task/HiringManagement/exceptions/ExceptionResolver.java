@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @ControllerAdvice
@@ -83,5 +84,14 @@ public class ExceptionResolver {
             sb.append(error.getDefaultMessage());
         }
         return new ResponseEntity<>(sb.toString(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DateTimeParseException.class)
+    protected ResponseEntity<String> dateTimeParse(DateTimeParseException exception) {
+        return new ResponseEntity<>("Value " + exception.getParsedString() + " is not valid DateTime format", HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(NumberFormatException.class)
+    protected ResponseEntity<String> NumberParse(NumberFormatException exception) {
+        return new ResponseEntity<>("Value " + exception.getMessage().substring(exception.getMessage().indexOf('"')) + " is not valid Number format", HttpStatus.BAD_REQUEST);
     }
 }

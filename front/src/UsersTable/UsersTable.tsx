@@ -199,6 +199,7 @@ export function UsersTable() {
     },[search,selectedSkills]);
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.currentTarget;
+        setPage(1);
         setSearch(value);
 
     };
@@ -221,7 +222,7 @@ export function UsersTable() {
     ));
     return (
         <div className="content">
-            <Modal className="modal" opened={openedAddCandidate} onClose={close} title="Authentication" centered scrollAreaComponent={ScrollArea.Autosize}>
+            <Modal className="modal" opened={openedAddCandidate} onClose={close} title="Manage Candidates" centered scrollAreaComponent={ScrollArea.Autosize}>
                 <AddCandidateForm onClick={setData} id={id} />
             </Modal>
             <Modal opened={skillModal} className="modal" onClose={()=>{setSkillModal(false)}} title="Manage Skills" centered scrollAreaComponent={ScrollArea.Autosize}>
@@ -251,7 +252,7 @@ export function UsersTable() {
                     searchable
                     nothingFound="Nothing found"
                     value={selectedSkills}
-                    onChange={skills=>{setSelectedSkills(skills)}}
+                    onChange={skills=>{setPage(1);setSelectedSkills(skills)}}
                 />
                 </div>
                 <div className="page-size-div">
@@ -264,7 +265,7 @@ export function UsersTable() {
                                 { value: '100', label: '100' },
                             ]}
                             value={pageSize}
-                            onChange={setPageSize}
+                            onChange={size=>{setPage(1);setPageSize(size)}}
                     />
                 </div>
                 <Table className="table" horizontalSpacing="md" verticalSpacing="xs" miw={700} sx={{ tableLayout: 'fixed' }}>

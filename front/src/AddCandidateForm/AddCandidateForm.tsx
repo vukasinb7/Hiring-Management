@@ -111,7 +111,7 @@ function AddCandidateForm(props:MyProps) {
                 />
                 <div className="submit-div">
                     <Button type="submit" mt="sm">
-                        Submit
+                        {disabled?"Update":"Add"}
                     </Button>
                     {userID!=-1&&
                     <Button id="submit-button"  onClick={()=>{deleteCanidate(props)}} mt="sm">

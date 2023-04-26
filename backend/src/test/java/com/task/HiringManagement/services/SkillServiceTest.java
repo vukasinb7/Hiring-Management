@@ -4,6 +4,7 @@ import com.task.HiringManagement.dtos.PostSkillDTO;
 import com.task.HiringManagement.exceptions.BadRequestException;
 import com.task.HiringManagement.exceptions.NotFoundException;
 import com.task.HiringManagement.models.Skill;
+import com.task.HiringManagement.repositories.CandidateRepository;
 import com.task.HiringManagement.repositories.SkillRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +17,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.doNothing;
@@ -24,6 +27,8 @@ import static org.mockito.Mockito.doNothing;
 public class SkillServiceTest {
     @Mock
     private SkillRepository skillRepository;
+    @Mock
+    private CandidateRepository candidateRepository;
 
     @Mock
     private ModelMapper modelMapper;
@@ -50,6 +55,22 @@ public class SkillServiceTest {
     public void getSkill404(){
         Mockito.when(skillRepository.findById(1L)).thenThrow(NotFoundException.class);
         Assertions.assertThrows(NotFoundException.class,()->{skillService.get(1L);},"Skill not found");
+    }
+
+    @Test
+    @DisplayName("Get All Skills - Case: Positive")
+    public void getAllSkillsPositive(){
+        Skill skillExp1= new Skill("Java",1L);
+        Skill skillExp2= new Skill("Python",2L);
+        List<Skill> skillsExp=new ArrayList<>();
+        skillsExp.add(skillExp1);
+        skillsExp.add(skillExp2);
+
+        Mockito.when(skillRepository.findAll()).thenReturn(skillsExp);
+        List<Skill> skills=skillService.getAll();
+        Assertions.assertNotNull(skills);
+        Assertions.assertEquals(skillsExp.size(),skills.size());
+        Mockito.verify(skillRepository,Mockito.times(1)).findAll();
     }
 
     @Test
@@ -139,6 +160,7 @@ public class SkillServiceTest {
         Skill skillExp= new Skill("Java",1L);
         doNothing().when(skillRepository).deleteById(1L);
         Mockito.when(skillRepository.findById(1L)).thenReturn(Optional.of(skillExp));
+        Mockito.when(candidateRepository.findCandidateBySkillsIsIn(1L)).thenReturn(new ArrayList<>());
         skillService.delete(1L);
         Mockito.verify(skillRepository,Mockito.times(1)).deleteById(1L);
     }

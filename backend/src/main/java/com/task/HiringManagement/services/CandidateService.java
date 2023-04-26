@@ -86,7 +86,8 @@ public class CandidateService implements ICandidateService {
             throw new BadRequestException("Email is taken");
 
         candidate.setName(candidateDTO.getName());
-        candidate.setBirth(LocalDateTime.parse(candidateDTO.getBirth()));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        candidate.setBirth(LocalDate.parse(candidateDTO.getBirth(),formatter).atStartOfDay());
         candidate.setEmail(candidateDTO.getEmail());
         candidate.setContactNumber(candidateDTO.getContactNumber());
         return candidateRepository.save(candidate);

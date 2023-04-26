@@ -20,6 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/candidate")
 public class CandidateController {
@@ -71,6 +73,17 @@ public class CandidateController {
         Page<Candidate> candidates = candidateService.getAll(PageRequest.of(page, size));
         return new ResponseEntity<>(new FilteredCandidatesDTO(candidates), HttpStatus.OK);
     }
+
+    @Operation(summary = "Get Candidate")
+    @GetMapping(
+            value = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    ResponseEntity<GetCandidateDTO> getCandidateByID(@NotNull @Positive @PathVariable("id") Long id){
+       Candidate candidate = candidateService.get(id);
+        return new ResponseEntity<>(modelMapper.map(candidate,GetCandidateDTO.class), HttpStatus.OK);
+    }
+
     @Operation(summary = "Search Candidate By Skills")
     @GetMapping(
             value = "/searchSkills",
@@ -82,8 +95,25 @@ public class CandidateController {
                                                                    @Positive(message = "Size must be positive")
                                                                  @NotNull(message = "Field (size) is required")
                                                                  @RequestParam int size,
-                                                                   @RequestBody PostSkillListDTO postSkillListDTO){
-        Page<Candidate> candidates = candidateService.searchBySkills(postSkillListDTO, PageRequest.of(page, size));
+                                                                   @RequestParam List<String> skills){
+        Page<Candidate> candidates = candidateService.searchBySkills(skills, PageRequest.of(page, size));
+        return new ResponseEntity<>(new FilteredCandidatesDTO(candidates), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Search Candidate By Skills")
+    @GetMapping(
+            value = "/search",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    ResponseEntity<FilteredCandidatesDTO> searchCandidatesComplex(@Min(value=0, message = "Page must be 0 or greater")
+                                                                   @NotNull(message = "Field (page) is required")
+                                                                   @RequestParam int page,
+                                                                   @Positive(message = "Size must be positive")
+                                                                   @NotNull(message = "Field (size) is required")
+                                                                   @RequestParam int size,
+                                                                   @RequestParam List<String> skills,
+                                                                   @RequestParam String name){
+        Page<Candidate> candidates = candidateService.searchComplex(skills,name,PageRequest.of(page, size));
         return new ResponseEntity<>(new FilteredCandidatesDTO(candidates), HttpStatus.OK);
     }
     @Operation(summary = "Delete Candidate")
@@ -127,6 +157,18 @@ public class CandidateController {
     @Positive(message = "Id must be positive")
     @PathVariable Long id){
         Candidate candidate= candidateService.removeSkills(skillListDTO,id);
+        return new ResponseEntity<>(modelMapper.map(candidate,GetCandidateDTO.class), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Add Skills To Candidate")
+    @PutMapping(
+            value = "/skills/update/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<GetCandidateDTO> updateSkills(@RequestBody @Valid PostSkillListDTO skillListDTO, @NotNull(message = "Field (id) is required")
+    @Positive(message = "Id must be positive")
+    @PathVariable Long id){
+        Candidate candidate= candidateService.updateSkills(skillListDTO,id);
         return new ResponseEntity<>(modelMapper.map(candidate,GetCandidateDTO.class), HttpStatus.OK);
     }
 

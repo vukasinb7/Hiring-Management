@@ -11,7 +11,6 @@ INSERT INTO CANDIDATES (full_name,birth,contact_number,email) VALUES ('Stefan Jo
 
 INSERT INTO CANDIDATES_SKILLS(candidate_id,skill_id) VALUES ('1','1');
 INSERT INTO CANDIDATES_SKILLS(candidate_id,skill_id) VALUES ('1','2');
-INSERT INTO CANDIDATES_SKILLS(candidate_id,skill_id) VALUES ('1','3');
 INSERT INTO CANDIDATES_SKILLS(candidate_id,skill_id) VALUES ('1','4');
 INSERT INTO CANDIDATES_SKILLS(candidate_id,skill_id) VALUES ('2','4');
 INSERT INTO CANDIDATES_SKILLS(candidate_id,skill_id) VALUES ('2','2');

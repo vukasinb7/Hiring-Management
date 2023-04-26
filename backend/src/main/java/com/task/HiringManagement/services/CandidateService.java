@@ -69,8 +69,12 @@ public class CandidateService implements ICandidateService {
     }
 
     @Override
-    public Page<Candidate> searchBySkills(PostSkillListDTO skillListDTO, PageRequest pageRequest){
-        return candidateRepository.findCandidateBySkillsContaing(skillListDTO.getSkillIds(),skillListDTO.getSkillIds().size(),pageRequest);
+    public Page<Candidate> searchBySkills(List<String> skills, PageRequest pageRequest){
+        return candidateRepository.findCandidateBySkillsContaing(skills.stream().map(Long::parseLong).toList(),skills.size(),pageRequest);
+    }
+    @Override
+    public Page<Candidate> searchComplex(List<String> skills, String name, PageRequest pageRequest){
+        return candidateRepository.findCandidateComplex(skills.stream().map(Long::parseLong).toList(),name,skills.size(),pageRequest);
 
     }
 
@@ -92,7 +96,7 @@ public class CandidateService implements ICandidateService {
         Candidate candidate=get(id);
         List<Skill> updatedSkills=candidate.getSkills();
         updatedSkills.addAll(parseSkills(skillIds.getSkillIds()));
-        candidate.setSkills(updatedSkills.stream().distinct().toList());
+        candidate.setSkills(updatedSkills);
         return candidateRepository.save(candidate);
     }
 
@@ -101,7 +105,15 @@ public class CandidateService implements ICandidateService {
         Candidate candidate=get(id);
         List<Skill> updatedSkills=candidate.getSkills();
         updatedSkills.removeAll(parseSkills(skillIds.getSkillIds()));
-        candidate.setSkills(updatedSkills.stream().distinct().toList());
+        candidate.setSkills(updatedSkills);
+        return candidateRepository.save(candidate);
+    }
+
+    @Override
+    public Candidate updateSkills(PostSkillListDTO skillIds, Long id){
+        Candidate candidate=get(id);
+        List<Skill> updatedSkills=parseSkills(skillIds.getSkillIds());
+        candidate.setSkills(updatedSkills);
         return candidateRepository.save(candidate);
     }
 

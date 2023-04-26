@@ -1,0 +1,52 @@
+.paginator{
+    display: flex;
+    justify-content: center;
+}
+.table{
+    margin: 50px auto;
+    width: 80%;
+}
+.buttons-div{
+    display: flex;
+    justify-content: end;
+}
+.buttons-div button{
+    margin: 20px;
+}
+.search-div{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    width: 60%;
+    min-width: 500px;
+}
+.search-div>*{
+    margin:10px;
+    min-width: 500px;
+    max-width: 750px;
+}
+tbody tr:hover{
+    cursor:pointer;
+}
+.page-size-select{
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin-top: 20px;
+}
+.page-size-select label{
+    margin-right: 10px;
+}
+.page-size-select input{
+    max-width: 80px;
+}
+.page-size-div{
+    width: 80%;
+    margin: 10px auto;
+}
+.header-text{
+    margin: 0 auto;
+}

@@ -18,11 +18,17 @@ public interface ICandidateService {
 
     Page<Candidate> searchByName(String name, PageRequest pageable);
 
-    Page<Candidate> searchBySkills(PostSkillListDTO skillListDTO, PageRequest pageRequest);
+    Page<Candidate> searchBySkills(List<String> skills, PageRequest pageRequest);
+
+    Page<Candidate> searchComplex(List<String> skillListDTO, String name, PageRequest pageRequest);
 
     Candidate updatePersonalInformations(PostCandidateDTO candidateDTO, Long id);
 
     Candidate addSkills(PostSkillListDTO skillIds, Long id);
 
     Candidate removeSkills(PostSkillListDTO skillIds, Long id);
+
+    Candidate updateSkills(PostSkillListDTO skillIds, Long id);
+
+    Page<Candidate> getAll(PageRequest pageRequest);
 }

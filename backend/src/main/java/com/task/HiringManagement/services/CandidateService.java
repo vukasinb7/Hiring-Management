@@ -14,6 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +46,8 @@ public class CandidateService implements ICandidateService {
     @Override
     public Candidate insert(PostCandidateDTO candidateDTO){
         Candidate candidate= modelMapper.map(candidateDTO,Candidate.class);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        candidate.setBirth(LocalDate.parse(candidateDTO.getBirth(),formatter).atStartOfDay());
         if (candidateRepository.findCandidateByEmail(candidate.getEmail()).isPresent())
             throw new BadRequestException("Candidate with same email already exists");
         List<Long> skillIds= candidateDTO.getSkillIds().stream().distinct().toList();
@@ -64,8 +69,12 @@ public class CandidateService implements ICandidateService {
     }
 
     @Override
-    public Page<Candidate> searchBySkills(PostSkillListDTO skillListDTO, PageRequest pageRequest){
-        return candidateRepository.findCandidateBySkillsContaing(skillListDTO.getSkillIds(),skillListDTO.getSkillIds().size(),pageRequest);
+    public Page<Candidate> searchBySkills(List<String> skills, PageRequest pageRequest){
+        return candidateRepository.findCandidateBySkillsContaing(skills.stream().map(Long::parseLong).toList(),skills.size(),pageRequest);
+    }
+    @Override
+    public Page<Candidate> searchComplex(List<String> skills, String name, PageRequest pageRequest){
+        return candidateRepository.findCandidateComplex(skills.stream().map(Long::parseLong).toList(),name,skills.size(),pageRequest);
 
     }
 
@@ -77,7 +86,7 @@ public class CandidateService implements ICandidateService {
             throw new BadRequestException("Email is taken");
 
         candidate.setName(candidateDTO.getName());
-        candidate.setBirth(candidateDTO.getBirth());
+        candidate.setBirth(LocalDateTime.parse(candidateDTO.getBirth()));
         candidate.setEmail(candidateDTO.getEmail());
         candidate.setContactNumber(candidateDTO.getContactNumber());
         return candidateRepository.save(candidate);
@@ -87,7 +96,7 @@ public class CandidateService implements ICandidateService {
         Candidate candidate=get(id);
         List<Skill> updatedSkills=candidate.getSkills();
         updatedSkills.addAll(parseSkills(skillIds.getSkillIds()));
-        candidate.setSkills(updatedSkills.stream().distinct().toList());
+        candidate.setSkills(updatedSkills);
         return candidateRepository.save(candidate);
     }
 
@@ -96,8 +105,21 @@ public class CandidateService implements ICandidateService {
         Candidate candidate=get(id);
         List<Skill> updatedSkills=candidate.getSkills();
         updatedSkills.removeAll(parseSkills(skillIds.getSkillIds()));
-        candidate.setSkills(updatedSkills.stream().distinct().toList());
+        candidate.setSkills(updatedSkills);
         return candidateRepository.save(candidate);
+    }
+
+    @Override
+    public Candidate updateSkills(PostSkillListDTO skillIds, Long id){
+        Candidate candidate=get(id);
+        List<Skill> updatedSkills=parseSkills(skillIds.getSkillIds());
+        candidate.setSkills(updatedSkills);
+        return candidateRepository.save(candidate);
+    }
+
+    @Override
+    public Page<Candidate> getAll(PageRequest pageRequest){
+        return candidateRepository.findAll(pageRequest);
     }
 
     private List<Skill> parseSkills(List<Long> skillIds){

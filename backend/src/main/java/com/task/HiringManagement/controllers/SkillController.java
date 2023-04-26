@@ -15,6 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/api/skill")
 public class SkillController {
@@ -47,6 +51,21 @@ public class SkillController {
         Skill skill= skillService.get(id);
         return new ResponseEntity<>(modelMapper.map(skill,GetSkillDTO.class), HttpStatus.OK);
     }
+
+    @Operation(summary = "Get All Skills")
+    @GetMapping(
+            value = "/all",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<GetSkillDTO>> getAll(){
+        List<Skill> skills= skillService.getAll();
+        List<GetSkillDTO> dtos = skills
+                .stream()
+                .map(skill -> modelMapper.map(skill, GetSkillDTO.class))
+                .toList();
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+
     @Operation(summary = "Update Skill")
     @PutMapping(
             value = "/{id}",

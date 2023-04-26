@@ -3,23 +3,28 @@ package com.task.HiringManagement.services;
 import com.task.HiringManagement.dtos.PostSkillDTO;
 import com.task.HiringManagement.exceptions.BadRequestException;
 import com.task.HiringManagement.exceptions.NotFoundException;
+import com.task.HiringManagement.models.Candidate;
 import com.task.HiringManagement.models.Skill;
+import com.task.HiringManagement.repositories.CandidateRepository;
 import com.task.HiringManagement.repositories.SkillRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class SkillService implements ISkillService{
 
     private final SkillRepository skillRepository;
+    private final CandidateRepository candidateRepository;
     private ModelMapper modelMapper;
 
     @Autowired
-    public SkillService(SkillRepository skillRepository, ModelMapper modelMapper){
+    public SkillService(SkillRepository skillRepository,CandidateRepository candidateRepository, ModelMapper modelMapper){
         this.skillRepository=skillRepository;
+        this.candidateRepository=candidateRepository;
         this.modelMapper=modelMapper;
     }
 
@@ -29,6 +34,10 @@ public class SkillService implements ISkillService{
         if (skill.isEmpty())
             throw new NotFoundException("Skill not found");
         return  skill.get();
+    }
+    @Override
+    public List<Skill> getAll(){
+        return skillRepository.findAll();
     }
 
     @Override
@@ -51,7 +60,14 @@ public class SkillService implements ISkillService{
 
     @Override
     public void delete(Long id){
-        get(id);
+        Skill skill=get(id);
+
+        List<Candidate> candidates=candidateRepository.findCandidateBySkillsIsIn(id);
+        for (Candidate candidate:candidates) {
+            candidate.getSkills().remove(skill);
+
+        }
+        candidateRepository.saveAll(candidates);
         skillRepository.deleteById(id);
     }
 }

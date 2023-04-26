@@ -1,5 +1,6 @@
 package com.task.HiringManagement.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.task.HiringManagement.models.Skill;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GetCandidateDTO {
     private String name;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime birth;
     private String contactNumber;
     private String email;

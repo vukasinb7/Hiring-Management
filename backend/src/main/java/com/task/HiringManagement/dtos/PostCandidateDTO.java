@@ -19,8 +19,8 @@ public class PostCandidateDTO {
     private String name;
 
 
-    @Past(message = "Date of birth must be in past")
-    private LocalDateTime birth;
+    @NotBlank(message = "Field (birth) is required!")
+    private String birth;
 
     @NotBlank(message = "Field (contactNumber) is required!")
     @Pattern(regexp = "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$",message = "Phone number is not valid")
@@ -29,7 +29,6 @@ public class PostCandidateDTO {
     @NotBlank(message = "Field (email) is required!")
     @Email
     private String email;
-
 
     private List<Long> skillIds;
 }

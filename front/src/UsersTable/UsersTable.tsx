@@ -223,7 +223,7 @@ export function UsersTable() {
     return (
         <div className="content">
             <Modal className="modal" opened={openedAddCandidate} onClose={close} title="Manage Candidates" centered scrollAreaComponent={ScrollArea.Autosize}>
-                <AddCandidateForm onClick={setData} id={id} />
+                <AddCandidateForm onClick={setData} id={id} onClose={close} />
             </Modal>
             <Modal opened={skillModal} className="modal" onClose={()=>{setSkillModal(false)}} title="Manage Skills" centered scrollAreaComponent={ScrollArea.Autosize}>
                 <ManageSkills onClick={setData} />

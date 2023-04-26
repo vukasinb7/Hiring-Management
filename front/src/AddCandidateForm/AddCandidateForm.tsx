@@ -5,9 +5,12 @@ import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import axios from "axios";
 import './AddCandidateForm.css'
 import {RowData, SkillPreview} from "../models/models";
+import { notifications } from '@mantine/notifications';
+import {IconCheck} from "@tabler/icons-react";
 
 type MyProps = {
     onClick: (candidates: RowData[]) => void;
+    onClose: () => void;
     id:number;
 }
 
@@ -62,7 +65,27 @@ function AddCandidateForm(props:MyProps) {
                 skillIds:values.skills}).then(()=>{
             axios.get("http://localhost:9000/api/candidate/all?page=0&size=10").then(response=>{
                 props.onClick(response.data.candidates);
-                form.reset();
+                notifications.show({
+                    title: 'Candidate successfully added!',
+                    message: '',
+                    icon:<IconCheck size="1.2rem" />,
+                    styles: (theme) => ({
+                        root: {
+                            backgroundColor: theme.colors.blue[6],
+                            borderColor: theme.colors.blue[6],
+
+                            '&::before': { backgroundColor: theme.white },
+                        },
+                        title: { color: theme.white },
+                        description: { color: theme.white },
+
+                        closeButton: {
+                            color: theme.white,
+                            '&:hover': { backgroundColor: theme.colors.blue[7] },
+                        }
+                    }),
+                })
+                props.onClose();
             });}
         )}
         else {
@@ -70,6 +93,27 @@ function AddCandidateForm(props:MyProps) {
                 {skillIds:values.skills}).then(()=>{
                 axios.get("http://localhost:9000/api/candidate/all?page=0&size=10").then(response=>{
                     props.onClick(response.data.candidates);
+                    notifications.show({
+                        title: 'Candidate successfully updated!',
+                        message: '',
+                        icon:<IconCheck size="1.2rem" />,
+                        styles: (theme) => ({
+                            root: {
+                                backgroundColor: theme.colors.blue[6],
+                                borderColor: theme.colors.blue[6],
+
+                                '&::before': { backgroundColor: theme.white },
+                            },
+                            title: { color: theme.white },
+                            description: { color: theme.white },
+
+                            closeButton: {
+                                color: theme.white,
+                                '&:hover': { backgroundColor: theme.colors.blue[7] },
+                            }
+                        }),
+                    })
+                    props.onClose();
                 });
                 }
             )
@@ -81,7 +125,27 @@ function AddCandidateForm(props:MyProps) {
             setUserID(-1);
             axios.get("http://localhost:9000/api/candidate/all?page=0&size=10").then(response=>{
                 props.onClick(response.data.candidates);
-                form.reset();
+                notifications.show({
+                    title: 'Candidate successfully deleted!',
+                    message: '',
+                    icon:<IconCheck size="1.2rem" />,
+                    styles: (theme) => ({
+                        root: {
+                            backgroundColor: theme.colors.blue[6],
+                            borderColor: theme.colors.blue[6],
+
+                            '&::before': { backgroundColor: theme.white },
+                        },
+                        title: { color: theme.white },
+                        description: { color: theme.white },
+
+                        closeButton: {
+                            color: theme.white,
+                            '&:hover': { backgroundColor: theme.colors.blue[7] },
+                        }
+                    }),
+                })
+                props.onClose();
             });
             })
     }

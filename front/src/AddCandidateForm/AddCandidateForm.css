@@ -1,0 +1,7 @@
+.submit-div{
+    display: flex;
+    justify-content: center;
+}
+.submit-div>*{
+    margin: 10px;
+}

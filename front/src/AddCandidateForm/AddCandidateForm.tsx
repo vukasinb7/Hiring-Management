@@ -4,44 +4,26 @@ import {DatePickerInput} from "@mantine/dates";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import axios from "axios";
 import './AddCandidateForm.css'
-interface SkillPreview{
-    value:string;
-    label:string;
-}
+import {RowData, SkillPreview} from "../models/models";
 
-interface RowData {
-    name: string;
-    email: string;
-    contactNumber: string;
-    birth: number[];
-    skills:Skill[];
-    id:number;
-}
-interface Skill{
-    name:string;
-    id:number;
-}
 type MyProps = {
     onClick: (candidates: RowData[]) => void;
     id:number;
-
 }
-
 
 function AddCandidateForm(props:MyProps) {
     const [data,setData]=useState<SkillPreview[]>([]);
-    const [selectedValue,setSelectedValue]=useState<SkillPreview[]>([]);
     const [userID,setUserID]=useState<number>(-1);
     const [disabled,setDisabled]=useState<boolean>(false);
     const form = useForm({
         initialValues: { name: '', email: '', phone: '',birth:new Date(),skills:[] as number[] },validateInputOnBlur:true,
-
         validate: {
             name: (value) => (value.length < 2 ? 'Name must have at least 2 letters' : null),
             email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-            phone: (value) => (/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/.test(value) ? null : 'Invalid phone'),
+            phone: (value) => (/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{3,6}$/.test(value) ? null : 'Invalid phone'),
         },
     });
+
     useEffect( ()=>{
         axios.get("http://localhost:9000/api/skill/all").then(response=>{
             let dataList:SkillPreview[]=[];
@@ -56,8 +38,6 @@ function AddCandidateForm(props:MyProps) {
     },[])
     useEffect(()=>{
         if (userID!=-1){
-            setDisabled(true);
-
             axios.get(`http://localhost:9000/api/candidate/${userID}`).then(response=>{
                 form.values.name=response.data.name;
                 form.values.email=response.data.email;
@@ -68,6 +48,7 @@ function AddCandidateForm(props:MyProps) {
                     skillNumbers.push(response.data.skills[i].id);
                 }
                 form.values.skills=skillNumbers;
+                setDisabled(true);
             });}
     },[userID])
 
@@ -102,16 +83,13 @@ function AddCandidateForm(props:MyProps) {
                 props.onClick(response.data.candidates);
                 form.reset();
             });
-            }
-        )
+            })
     }
-
-
 
     return (
         <Box maw={320} mx="auto">
             <form onSubmit={form.onSubmit(values => {sendCandidate(values,props)})}>
-                <TextInput label="Name" placeholder="Name" disabled={disabled} {...form.getInputProps('name')} />
+                <TextInput label="Name" placeholder="Name"  disabled={disabled} {...form.getInputProps('name')}/>
                 <TextInput label="Email" placeholder="Email" disabled={disabled} {...form.getInputProps('email')} />
                 <TextInput label="Phone" placeholder="Phone" disabled={disabled} {...form.getInputProps('phone')}/>
                 <DatePickerInput disabled={disabled}
@@ -132,7 +110,6 @@ function AddCandidateForm(props:MyProps) {
                     {...form.getInputProps('skills')}
                 />
                 <div className="submit-div">
-
                     <Button type="submit" mt="sm">
                         Submit
                     </Button>
@@ -140,7 +117,6 @@ function AddCandidateForm(props:MyProps) {
                     <Button id="submit-button"  onClick={()=>{deleteCanidate(props)}} mt="sm">
                         Delete
                     </Button>}
-
                 </div>
             </form>
         </Box>

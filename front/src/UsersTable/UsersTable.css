@@ -6,6 +6,13 @@
     margin: 50px auto;
     width: 80%;
 }
+.buttons-div{
+    display: flex;
+    justify-content: end;
+}
+.buttons-div button{
+    margin: 20px;
+}
 .search-div{
     display: flex;
     justify-content: center;
@@ -23,4 +30,23 @@
 }
 tbody tr:hover{
     cursor:pointer;
+}
+.page-size-select{
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin-top: 20px;
+}
+.page-size-select label{
+    margin-right: 10px;
+}
+.page-size-select input{
+    max-width: 80px;
+}
+.page-size-div{
+    width: 80%;
+    margin: 10px auto;
+}
+.header-text{
+    margin: 0 auto;
 }

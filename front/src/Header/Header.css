@@ -1,7 +1,0 @@
-.header{
-    display: flex;
-    justify-content: space-between;
-}
-.modal{
-    min-height: 1000px !important;
-}

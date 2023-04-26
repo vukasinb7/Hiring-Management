@@ -7,6 +7,21 @@
     margin: 10px 0;
     align-items: center;
 }
-form>*{
+form>* {
     margin-bottom: 20px;
+
+}
+form{
+    position: sticky;
+    top: 50px;
+    z-index: 10000;
+    padding-top: 5px;
+    background-color: white;
+    padding-bottom: 5px;
+}
+.delete-buttons{
+    background-color: #d92525;
+}
+.delete-buttons:hover{
+    background-color: #c02020;
 }

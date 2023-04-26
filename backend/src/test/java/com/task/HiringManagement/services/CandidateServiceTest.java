@@ -17,6 +17,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -172,7 +175,7 @@ public class CandidateServiceTest {
         skills.add(skill1);
         skills.add(skill2);
         skills.add(skill3);
-        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic",LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",Arrays.asList(1L,2L,3L));
+        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic","2001-12-07","0653614028","vukasin@email.com",Arrays.asList(1L,2L,3L));
         Candidate candidateExp= new Candidate("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",skills,1L);
         Mockito.when(candidateRepository.findCandidateByEmail("vukasin@email.com")).thenReturn(Optional.empty());
         Mockito.when(candidateRepository.save(candidateExp)).thenReturn(candidateExp);
@@ -205,7 +208,7 @@ public class CandidateServiceTest {
         skills.add(skill1);
         skills.add(skill2);
         skills.add(skill3);
-        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic",LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",Arrays.asList(1L,2L,3L));
+        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic","2001-12-07","0653614028","vukasin@email.com",Arrays.asList(1L,2L,3L));
         Candidate candidateExp= new Candidate("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",skills,1L);
         Candidate candidateSameEmail= new Candidate("Vujadin Bogdanovic", LocalDateTime.of(2000,12,7,0,0),"065123456","vukasin@email.com",new ArrayList<>(),1L);
         Mockito.when(candidateRepository.findCandidateByEmail("vukasin@email.com")).thenReturn(Optional.of(candidateSameEmail));
@@ -223,7 +226,7 @@ public class CandidateServiceTest {
         skills.add(skill1);
         skills.add(skill2);
         skills.add(skill3);
-        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic",LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",Arrays.asList(1L,2L,3L));
+        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic","2001-12-07","0653614028","vukasin@email.com",Arrays.asList(1L,2L,3L));
         Candidate candidateExp= new Candidate("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",skills,1L);
         Mockito.when(candidateRepository.findCandidateByEmail("vukasin@email.com")).thenReturn(Optional.empty());
         Mockito.when(modelMapper.map(candidateDTO,Candidate.class)).thenReturn(candidateExp);
@@ -236,7 +239,7 @@ public class CandidateServiceTest {
     @Test
     @DisplayName("Update Candidate - Case: Positive")
     public void updateCandidatePositive(){
-        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic",LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",new ArrayList<>());
+        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic","2001-12-07","0653614028","vukasin@email.com",new ArrayList<>());
         Candidate candidateExp= new Candidate("Stefan Jovanovic", LocalDateTime.of(2000,1,17,0,0),"065614028","stefan@email.com",new ArrayList<>(),1L);
         Mockito.when(candidateRepository.findCandidateByEmail("vukasin@email.com")).thenReturn(Optional.empty());
         Mockito.when(candidateRepository.findById(1L)).thenReturn(Optional.of(candidateExp));
@@ -252,7 +255,7 @@ public class CandidateServiceTest {
     @Test
     @DisplayName("Update Candidate - Case: Positive Overwrite same email")
     public void updateCandidatePositiveSameEmail(){
-        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic",LocalDateTime.of(2001,12,7,0,0),"0653614028","stefan@email.com",new ArrayList<>());
+        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic","2001-12-12","0653614028","stefan@email.com",new ArrayList<>());
         Candidate candidateExp= new Candidate("Stefan Jovanovic", LocalDateTime.of(2000,1,17,0,0),"065614028","stefan@email.com",new ArrayList<>(),1L);
         Mockito.when(candidateRepository.findCandidateByEmail("stefan@email.com")).thenReturn(Optional.of(candidateExp));
         Mockito.when(candidateRepository.findById(1L)).thenReturn(Optional.of(candidateExp));
@@ -268,7 +271,7 @@ public class CandidateServiceTest {
     @Test
     @DisplayName("Update Candidate - Case: Non-Existing Candidate")
     public void updateCandidate404(){
-        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic",LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",new ArrayList<>());
+        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic","2001-12-7","0653614028","vukasin@email.com",new ArrayList<>());
         Candidate candidateExp= new Candidate("Stefan Jovanovic", LocalDateTime.of(2000,1,17,0,0),"065614028","stefan@email.com",new ArrayList<>(),1L);
         Mockito.when(candidateRepository.findById(1L)).thenReturn(Optional.empty());
         Assertions.assertThrows(NotFoundException.class,()->{candidateService.updatePersonalInformations(candidateDTO,1L);},"Candidate not found");
@@ -278,7 +281,7 @@ public class CandidateServiceTest {
     @Test
     @DisplayName("Update Candidate - Case: Email Is Taken")
     public void updateCandidate400(){
-        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic",LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",new ArrayList<>());
+        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic","2001-12-7","0653614028","vukasin@email.com",new ArrayList<>());
         Candidate candidateExp= new Candidate("Stefan Jovanovic", LocalDateTime.of(2000,1,17,0,0),"065614028","stefan@email.com",new ArrayList<>(),1L);
         Candidate candidateSameEmail= new Candidate("Stefan Jovanovic", LocalDateTime.of(2000,1,17,0,0),"065614028","vukasin@email.com",new ArrayList<>(),2L);
         Mockito.when(candidateRepository.findCandidateByEmail("vukasin@email.com")).thenReturn(Optional.of(candidateSameEmail));
@@ -286,5 +289,119 @@ public class CandidateServiceTest {
         Assertions.assertThrows(BadRequestException.class,()->{candidateService.updatePersonalInformations(candidateDTO,1L);},"Email is taken");
     }
 
+    @Test
+    @DisplayName("Get All Candidates - Case: Positive")
+    public void getCandidatesPositive(){
+        Candidate candidateExp= new Candidate("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",new ArrayList<>(),1L);
+        Candidate candidateExp2= new Candidate("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasinbogdanovic@email.com",new ArrayList<>(),2L);
+        List<Candidate> candidatesExp=new ArrayList<>(); candidatesExp.add(candidateExp);candidatesExp.add(candidateExp2);
+        Page<Candidate> pageCandidateExp= new PageImpl<>(candidatesExp);
+        Mockito.when(candidateRepository.findAll(PageRequest.of(0,10))).thenReturn(pageCandidateExp);
+        Page<Candidate> pageCandidate=candidateService.getAll(PageRequest.of(0,10));
+        Assertions.assertNotNull(pageCandidate);
+        Assertions.assertEquals(pageCandidate.getTotalElements(),pageCandidateExp.getTotalElements());
+        Mockito.verify(candidateRepository,Mockito.times(1)).findAll(PageRequest.of(0,10));
+    }
 
+    @Test
+    @DisplayName("Search Candidates By Name - Case: Positive")
+    public void searchByNamePositive(){
+        Candidate candidateExp= new Candidate("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",new ArrayList<>(),1L);
+        Candidate candidateExp2= new Candidate("Stefan Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasinbogdanovic@email.com",new ArrayList<>(),2L);
+        List<Candidate> candidatesExp=new ArrayList<>(); candidatesExp.add(candidateExp);candidatesExp.add(candidateExp2);
+        Page<Candidate> pageCandidateExp= new PageImpl<>(candidatesExp);
+        Mockito.when(candidateRepository.findCandidateByNameContainingIgnoreCase("bog",PageRequest.of(0,10))).thenReturn(pageCandidateExp);
+        Page<Candidate> pageCandidate=candidateService.searchByName("bog",PageRequest.of(0,10));
+        Assertions.assertNotNull(pageCandidate);
+        Assertions.assertEquals(pageCandidate.getTotalElements(),pageCandidateExp.getTotalElements());
+        Mockito.verify(candidateRepository,Mockito.times(1)).findCandidateByNameContainingIgnoreCase("bog",PageRequest.of(0,10));
+    }
+
+    @Test
+    @DisplayName("Search Candidates By Skills - Case: Positive")
+    public void searchBySkillsPostive(){
+        Skill skill1=new Skill("Java",1L);
+        Skill skill2=new Skill("Go",2L);
+        Skill skill3=new Skill("Python",3L);
+        List<Skill> skills=new ArrayList<>();
+        skills.add(skill1);skills.add(skill2);skills.add(skill3);
+        List<Skill> skills2=new ArrayList<>();
+        skills2.add(skill1);skills2.add(skill3);
+        List<Skill> skillsExp=new ArrayList<>();
+        skillsExp.add(skill1);
+        Candidate candidateExp= new Candidate("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",skills,1L);
+        Candidate candidateExp2= new Candidate("Stefan Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasinbogdanovic@email.com",skills2,2L);
+        List<Candidate> candidatesExp=new ArrayList<>(); candidatesExp.add(candidateExp);candidatesExp.add(candidateExp2);
+        Page<Candidate> pageCandidateExp= new PageImpl<>(candidatesExp);
+        List<Long> skillsLongs=new ArrayList<>();skillsLongs.add(2L);
+        List<String> skillsString=new ArrayList<>();skillsString.add("2");
+        Mockito.when(candidateRepository.findCandidateBySkillsContaing(skillsLongs,1,PageRequest.of(0,10))).thenReturn(pageCandidateExp);
+        Page<Candidate> pageCandidate=candidateService.searchBySkills(skillsString,PageRequest.of(0,10));
+        Assertions.assertNotNull(pageCandidate);
+        Assertions.assertEquals(pageCandidate.getTotalElements(),2);
+        Mockito.verify(candidateRepository,Mockito.times(1)).findCandidateBySkillsContaing(skillsLongs,1,PageRequest.of(0,10));}
+
+
+    @Test
+    @DisplayName("Search Candidates Complex - Case: Positive")
+    public void searchComplexPostive(){
+        Skill skill1=new Skill("Java",1L);
+        Skill skill2=new Skill("Go",2L);
+        Skill skill3=new Skill("Python",3L);
+        List<Skill> skills=new ArrayList<>();
+        skills.add(skill1);skills.add(skill2);skills.add(skill3);
+        List<Skill> skills2=new ArrayList<>();
+        skills2.add(skill1);skills2.add(skill3);
+        List<Skill> skillsExp=new ArrayList<>();
+        skillsExp.add(skill1);
+        Candidate candidateExp= new Candidate("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",skills,1L);
+        Candidate candidateExp2= new Candidate("Stefan Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasinbogdanovic@email.com",skills2,2L);
+        List<Candidate> candidatesExp=new ArrayList<>(); candidatesExp.add(candidateExp);candidatesExp.add(candidateExp2);
+        Page<Candidate> pageCandidateExp= new PageImpl<>(candidatesExp);
+        List<Long> skillsLongs=new ArrayList<>();skillsLongs.add(2L);
+        List<String> skillsString=new ArrayList<>();skillsString.add("2");
+        Mockito.when(candidateRepository.findCandidateComplex(skillsLongs,"bog",1,PageRequest.of(0,10))).thenReturn(pageCandidateExp);
+        Page<Candidate> pageCandidate=candidateService.searchComplex(skillsString,"bog",PageRequest.of(0,10));
+        Assertions.assertNotNull(pageCandidate);
+        Assertions.assertEquals(pageCandidate.getTotalElements(),2);
+        Mockito.verify(candidateRepository,Mockito.times(1)).findCandidateComplex(skillsLongs,"bog",1,PageRequest.of(0,10));}
+
+    @Test
+    @DisplayName("Updates Skills Candidate - Case: Positive")
+    public void updateSkillsCandidatePositive(){
+        PostSkillListDTO skillListDTO=new PostSkillListDTO(Arrays.asList(1L,2L,3L));
+        Skill skill1=new Skill("Java",1L);
+        Skill skill2=new Skill("Go",2L);
+        Skill skill3=new Skill("Python",3L);
+        Candidate candidateExp= new Candidate("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",new ArrayList<>(),1L);
+        Mockito.when(candidateRepository.findById(1L)).thenReturn(Optional.of(candidateExp));
+        Mockito.when(candidateRepository.save(candidateExp)).thenReturn(candidateExp);
+        Mockito.when(skillRepository.findById(1L)).thenReturn(Optional.of(skill1));
+        Mockito.when(skillRepository.findById(2L)).thenReturn(Optional.of(skill2));
+        Mockito.when(skillRepository.findById(3L)).thenReturn(Optional.of(skill3));
+        Candidate candidate=candidateService.updateSkills(skillListDTO,1L);
+        Assertions.assertTrue(candidate.getSkills().contains(skill1));
+        Assertions.assertTrue(candidate.getSkills().contains(skill2));
+        Assertions.assertTrue(candidate.getSkills().contains(skill3));
+        Assertions.assertEquals(candidate.getSkills().size(),skillListDTO.getSkillIds().size());
+        Mockito.verify(candidateRepository,Mockito.times(1)).findById(1L);
+        Mockito.verify(skillRepository,Mockito.times(1)).findById(1L);
+        Mockito.verify(skillRepository,Mockito.times(1)).findById(2L);
+        Mockito.verify(skillRepository,Mockito.times(1)).findById(3L);
+    }
+
+    @Test
+    @DisplayName("Update Skills Candidate - Case: Non-Existing Skill")
+    public void updateSkillsCandidate404(){
+        PostSkillListDTO skillListDTO=new PostSkillListDTO(Arrays.asList(1L,2L,3L));
+        Skill skill1=new Skill("Java",1L);
+        Skill skill2=new Skill("Go",2L);
+        Skill skill3=new Skill("Python",3L);
+        Candidate candidateExp= new Candidate("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",new ArrayList<>(),1L);
+        Mockito.when(candidateRepository.findById(1L)).thenReturn(Optional.of(candidateExp));
+        Mockito.when(skillRepository.findById(1L)).thenReturn(Optional.of(skill1));
+        Mockito.when(skillRepository.findById(2L)).thenReturn(Optional.of(skill2));
+        Mockito.when(skillRepository.findById(3L)).thenReturn(Optional.empty());
+        Assertions.assertThrows(NotFoundException.class,()->{candidateService.updateSkills(skillListDTO,1L);});
+    }
 }

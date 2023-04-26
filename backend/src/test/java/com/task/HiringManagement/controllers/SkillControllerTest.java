@@ -15,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Arrays;
+
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -101,5 +103,22 @@ public class SkillControllerTest {
     @DisplayName("Delete Skill - Case: Not a number")
     public void deleteSkill400Format() throws Exception {
         mockMvc.perform(delete("/api/skill/aa")).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Get All Skills - Case: Positive")
+    public void getAllSkillPositive() throws Exception {
+        Skill skillExp= new Skill("Java",1L);
+        Skill skillExp2= new Skill("Python",2L);
+
+        Mockito.when(skillService.getAll()).thenReturn(Arrays.asList(skillExp,skillExp2));
+
+        mockMvc.perform(get("/api/skill/all"))
+                .andExpect(status().is(200))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id", Matchers.is(1)))
+                .andExpect(jsonPath("$[0].name", Matchers.is("Java")))
+                .andExpect(jsonPath("$[1].id", Matchers.is(2)))
+                .andExpect(jsonPath("$[1].name", Matchers.is("Python")));
     }
 }

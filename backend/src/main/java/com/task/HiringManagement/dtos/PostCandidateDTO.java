@@ -23,7 +23,7 @@ public class PostCandidateDTO {
     private String birth;
 
     @NotBlank(message = "Field (contactNumber) is required!")
-    @Pattern(regexp = "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$",message = "Phone number is not valid")
+    @Pattern(regexp = "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{3,6}$",message = "Phone number is not valid")
     private String contactNumber;
 
     @NotBlank(message = "Field (email) is required!")

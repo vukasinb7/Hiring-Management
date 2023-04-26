@@ -65,7 +65,6 @@ public class SkillService implements ISkillService{
         List<Candidate> candidates=candidateRepository.findCandidateBySkillsIsIn(id);
         for (Candidate candidate:candidates) {
             candidate.getSkills().remove(skill);
-
         }
         candidateRepository.saveAll(candidates);
         skillRepository.deleteById(id);

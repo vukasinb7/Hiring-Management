@@ -160,7 +160,7 @@ public class CandidateController {
         return new ResponseEntity<>(modelMapper.map(candidate,GetCandidateDTO.class), HttpStatus.OK);
     }
 
-    @Operation(summary = "Add Skills To Candidate")
+    @Operation(summary = "Update Skills Candidate")
     @PutMapping(
             value = "/skills/update/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE

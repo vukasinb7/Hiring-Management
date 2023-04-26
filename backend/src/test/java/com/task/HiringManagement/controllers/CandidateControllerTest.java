@@ -27,10 +27,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = CandidateController.class)
 public class CandidateControllerTest {
@@ -52,7 +50,7 @@ public class CandidateControllerTest {
         skills.add(skill1);
         skills.add(skill2);
         skills.add(skill3);
-        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",Arrays.asList(1L,2L,3L));
+        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic", "2001-12-7","0653614028","vukasin@email.com",Arrays.asList(1L,2L,3L));
         Candidate candidateExp= new Candidate("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",skills,1L);
 
         Mockito.when(candidateService.insert(candidateDTO)).thenReturn(candidateExp);
@@ -105,7 +103,10 @@ public class CandidateControllerTest {
     @Test
     @DisplayName("Search Candidate By Skills - Case: Positive")
     public void searchCandidateBySkillsPositive() throws Exception {
-        PostSkillListDTO skillListDTO=new PostSkillListDTO(Arrays.asList(1L,2L,3L));
+        List<String> skillListDTO=new ArrayList<>();
+        skillListDTO.add("1");
+        skillListDTO.add("2");
+        skillListDTO.add("3");
         Skill skill1=new Skill("Java",1L);
         Skill skill2=new Skill("Go",2L);
         Skill skill3=new Skill("Python",3L);
@@ -117,8 +118,7 @@ public class CandidateControllerTest {
         Page<Candidate> page = new PageImpl<>(Arrays.asList(candidateExp));
         Mockito.when(candidateService.searchBySkills(skillListDTO, PageRequest.of(0,5))).thenReturn(page);
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/candidate/searchSkills?page=0&size=5")
-                        .content(objectMapper.writeValueAsString(skillListDTO))
+                        .get("/api/candidate/searchSkills?page=0&size=5&skills=1,2,3")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -194,7 +194,7 @@ public class CandidateControllerTest {
         skills.add(skill1);
         skills.add(skill2);
         skills.add(skill3);
-        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",Arrays.asList(1L,2L,3L));
+        PostCandidateDTO candidateDTO= new PostCandidateDTO("Vukasin Bogdanovic", "2001-12-7","0653614028","vukasin@email.com",Arrays.asList(1L,2L,3L));
         Candidate candidateExp= new Candidate("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",skills,1L);
 
         Mockito.when(candidateService.updatePersonalInformations(candidateDTO,1L)).thenReturn(candidateExp);
@@ -205,6 +205,69 @@ public class CandidateControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Matchers.is(1)))
                 .andExpect(jsonPath("$.name", Matchers.is("Vukasin Bogdanovic")));
+    }
+
+    @Test
+    @DisplayName("Get All Candidates - Case: Positive")
+    public void getAllSkillPositive() throws Exception {
+        Candidate candidateExp= new Candidate("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",new ArrayList<>(),1L);
+        Candidate candidateEx2= new Candidate("Stefan Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","stefan@email.com",new ArrayList<>(),2L);
+
+        Page<Candidate> candidatePageExp=new PageImpl<>(Arrays.asList(candidateExp,candidateEx2));
+        Mockito.when(candidateService.getAll(PageRequest.of(0,10))).thenReturn(candidatePageExp);
+
+        mockMvc.perform(get("/api/candidate/all?page=0&size=10"))
+                .andExpect(status().is(200))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.totalCount", Matchers.is(2)))
+                .andExpect(jsonPath("$.candidates[0].id", Matchers.is(1)))
+                .andExpect(jsonPath("$.candidates[1].id", Matchers.is(2)));
+    }
+    @Test
+    @DisplayName("Get Candidate - Case: Positive")
+    public void getCandidatePositive() throws Exception {
+        Candidate candidateExp= new Candidate("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",new ArrayList<>(),1L);
+
+        Mockito.when(candidateService.get(1L)).thenReturn(candidateExp);
+
+        mockMvc.perform(get("/api/candidate/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", Matchers.is(1)))
+                .andExpect(jsonPath("$.name", Matchers.is("Vukasin Bogdanovic")));
+    }
+    @Test
+    @DisplayName("Get Candidate - Case: Not a number")
+    public void getSkill400Format() throws Exception {
+        mockMvc.perform(get("/api/candidate/aa")).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Update Skills Candidate - Case: Positive")
+    public void updateSkillPositive() throws Exception {
+        PostSkillListDTO skillListDTO=new PostSkillListDTO(Arrays.asList(1L,2L,3L));
+        Skill skill1=new Skill("Java",1L);
+        Skill skill2=new Skill("Go",2L);
+        Skill skill3=new Skill("Python",3L);
+        List<Skill> skills=new ArrayList<>();
+        skills.add(skill1);
+        skills.add(skill2);
+        skills.add(skill3);
+        Candidate candidateExp= new Candidate("Vukasin Bogdanovic", LocalDateTime.of(2001,12,7,0,0),"0653614028","vukasin@email.com",skills,1L);
+
+        Mockito.when(candidateService.updateSkills(skillListDTO,1L)).thenReturn(candidateExp);
+        mockMvc.perform(put("/api/candidate/skills/update/1")
+                        .content(objectMapper.writeValueAsString(skillListDTO))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.skills[0].id", Matchers.is(1)))
+                .andExpect(jsonPath("$.skills[1].id", Matchers.is(2)))
+                .andExpect(jsonPath("$.skills[2].id", Matchers.is(3)));
+    }
+    @Test
+    @DisplayName("Update Skills Candidate - Case: Not a number")
+    public void updateSkillsCandidate400Format() throws Exception {
+        mockMvc.perform(put("/api/candidate/skills/update/aa")).andExpect(status().isBadRequest());
     }
 
 }
